@@ -253,7 +253,14 @@ async function buildActionsForCopy(
 
             if ((await lstat(loc)).isDirectory()) {
               for (const file of await readdir(loc)) {
-                possibleExtraneous.add(path.join(loc, file));
+                // it's a scope, not a package
+                if (file[0] === '@') {
+                  for (const subfile of await fs.readdir(loc)) {
+                    possibleExtraneous.add(path.join(loc, subfile));
+                  }
+                } else {
+                  possibleExtraneous.add(path.join(loc, file));
+                }
               }
             }
           }
